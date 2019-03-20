@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class FileTableController implements Initializable {
-
+/*******************************************************************************************
+ * Received data from the ConnectionController class
+ ******************************************************************************************/
 	public void initData(User user, String serverHN, String serverPort, String userName, String userHN, String userPort,
 			String userSpeed) {
 		this.serverHN = serverHN;
@@ -18,19 +20,27 @@ public class FileTableController implements Initializable {
 
 	public void initialize(URL location, ResourceBundle resources) {
 	}
-
+/*******************************************************************************************
+ * Returns a list of all FileObjects in users files.
+ ******************************************************************************************/
 	private ObservableList<FileObject> getMyFiles() {
 
 	}
-
+/*******************************************************************************************
+ * Returns a list of all FileObjects in servers files
+ ******************************************************************************************/
 	private ObservableList<FileObject> getServerFiles() {
 
 	}
-
+/*******************************************************************************************
+ * Allowing editing of FileObjects description
+ ******************************************************************************************/
 	private void editDescription(FileObject item) {
 
 	}
-
+/*******************************************************************************************
+ * Facilitates the transfer of file between two users
+ ******************************************************************************************/
 	private void transferFile(FileObject item) {
 
 	}
@@ -38,7 +48,10 @@ public class FileTableController implements Initializable {
 	private void sessionAttributes() {
 
 	}
-
+/*******************************************************************************************
+ * When user clicks GetFile button the text is grabbed from search bar.
+ * Looks for filenames that match.
+ ******************************************************************************************/
 	public void getFile() {
 
 	}

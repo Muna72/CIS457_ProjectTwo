@@ -13,16 +13,23 @@ public class Centralized_Server {
         public static void main(String[] args) throws IOException {
 	}
 }
-
+/*******************************************************************************************
+ * Handle user client.
+ ******************************************************************************************/
 class ClientHandler implements Runnable {
 
+/*******************************************************************************************
+ * Creates the ClientHandler object
+ ******************************************************************************************/
 	public ClientHandler(Socket connectionSocket, BufferedReader dis, DataOutputStream dos) {
     }
     
 	public void run() {
     }
 }
-
+/*******************************************************************************************
+ * Manages client files which are available for download.
+ ******************************************************************************************/
 class ClientData {
 
 	public String hostName;
@@ -31,7 +38,9 @@ class ClientData {
 	public String fileDescription;
 	public String speed;
 	public int port;
-
+/*******************************************************************************************
+ * Stores information of a file.
+ ******************************************************************************************/
 	public ClientData(String hostUserName, String hn, int port, String fn, String fd, String sp) {
 		this.hostUserName = hostUserName;
 		this.hostName = hn;
