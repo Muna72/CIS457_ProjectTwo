@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<filelist>
+	<file>
+		<name>test.txt</name>
+		<description>Tester file description for transfer.</description>
+	</file>
+</filelist>
