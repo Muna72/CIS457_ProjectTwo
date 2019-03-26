@@ -1,22 +1,7 @@
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.BufferedInputStream;
-import java.io.OutputStream;
-import java.io.FileInputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javax.swing.*;
 import java.lang.Math;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -30,7 +15,7 @@ import org.dom4j.io.SAXReader;
  * Manages the local FTP client.
  * Used to instantiate a user.
 ****/
-public class FtpClientAndServer {
+public class FtpClientAndServer extends JPanel {
 
     private Socket s;
     private DataOutputStream out;
@@ -48,10 +33,10 @@ public class FtpClientAndServer {
     private String localPort;
     private Boolean loggedIn;
     
-    public int getRandomLocalPort(min, max) {
+    public int getRandomLocalPort(double min, double max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+    return Math.floor(Math.random() * (max - min)) + min); //The maximum is exclusive and the minimum is inclusive
     }
 
 
@@ -62,12 +47,12 @@ public class FtpClientAndServer {
  * Connects to the central server using data from JPanels.
  * Starts the local FTP server using data from JPanels.
 ****/
-    public void connectCentralServerStartLocalUser(String username, String serverHost, String serverPort, String speed
+    public void connectCentralServerStartLocalUser(String username, String serverHost, String serverPort, String speed,
         String localHost) throws IOException {
 
         //Creates a random local port between 50000 and 50010.
         //Might just hardcore a single localport for client/server to transfer to/from.
-        localPort.toString(getRandomLocalPort(50000, 50010));
+        String.valueOf(localPort.getRandomLocalPort(50000, 50010));
         
         //IP address obtained from JPanel
         InetAddress ip = InetAddress.getByName(serverHost);
