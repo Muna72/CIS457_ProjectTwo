@@ -15,7 +15,7 @@ public class CentralServer {
     public static void main(String[] args) throws IOException {
 
         try {
-            welcomeSocket = new ServerScoket(3158);
+            welcomeSocket = new ServerSocket(3158);
             System.out.println("Server is Up.");
         } catch (Exception e) {
             System.err.println("Error: Server was not started.");
@@ -26,7 +26,7 @@ public class CentralServer {
                 Socket connectionSocket = welcomeSocket.accept();
 
                 //Input and output stream to communication with client.
-                BufferedReader bufRead = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())):
+                BufferedReader bufRead = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
                 DataOutputStream dos = new DataOutputStream(connectionSocket.getOutputStream());
 
                 //instantiates a new clienthandler object with client socket and streams.
@@ -79,7 +79,7 @@ class ClientHandler implements Runnable {
     }
 
     //Run method is overridden to allow multiple clients to use the server.
-    @Overrride
+    @Override
     public void run() {
         //connectionString coming from localFtpClient.
         String connectionString;
@@ -90,10 +90,10 @@ class ClientHandler implements Runnable {
         try {
             //First string received contains the username, hostname, and speed for that specific client.
             in = new DataInputStream(connectionSocket.getInputStream());
-            connectionString = is.readUTF();
+            connectionString = in.readUTF();
 
             //New StringTokenizer containing connectionString.
-            String tokens = new StringTokenizer(connectionString);
+            StringTokenizer tokens = new StringTokenizer(connectionString);
             this.clientName = tokens.nextToken();
             this.hostName = tokens.nextToken();
             this.speed = tokens.nextToken();
@@ -121,7 +121,7 @@ class ClientHandler implements Runnable {
                         String fileInfo = in.readUTF();
                         tokens = new StringTokenizer(fileInfo);
                         //$ is used to parse here because fileDescription contains spaces.
-                        String fileName = tokens.nextToken($);
+                        String fileName = tokens.nextToken("$");
                         String fileDescription = tokens.nextToken();
 
                         //new clientdata object with necessary information for the file.
@@ -143,29 +143,29 @@ class ClientHandler implements Runnable {
                 //data fromClient
                 fromClient = in.readUTF();
                 //if output from client equals -1 quit server.
-                if(fromClient.equal("-1")) {
+                if(fromClient.equals("-1")) {
                 hasNotQuit = false;
                 } else {
                     //Central server file description search.
-                    for (int i = 0; i < Centralized_Server.clientData.size(); i++) {
-                        if (Centralized_Server.clientData.get(i).fileDescription.contains(fromClient)) {
-                            ClientData cd = Centralized_Server.clientData.get(i);
+                    for (int i = 0; i < CentralServer.clientData.size(); i++) {
+                        if (CentralServer.clientData.get(i).fileDescription.contains(fromClient)) {
+                            ClientData cd = CentralServer.clientData.get(i);
                             String str = cd.speed + " " + cd.hostName + " " + cd.port + " " + cd.fileName + " "
                                     + cd.hostUserName;
                             //sends string containing file information to be downloaded using retrieve.
-                            dos.writeUTF(str);
+                            out.writeUTF(str);
                             System.out.println(cd.fileName);
                         }
                     }
                 }
-                dos.writeUTF("EOF");
+                out.writeUTF("EOF");
             } while (hasNotQuit);
             //Online status set to offline.
             this.loggedIn = false;
             //remove file from clientData ArrayList.
-            for (int i = 0; i < Centralized_Server.clientData.size(); i++) {
-                if (Centralized_Server.clientData.get(i).hostName == this.hostName) {
-                    Centralized_Server.clientData.remove(i);
+            for (int i = 0; i < CentralServer.clientData.size(); i++) {
+                if (CentralServer.clientData.get(i).hostName == this.hostName) {
+                    CentralServer.clientData.remove(i);
                 }
             }
             //close connectionSocket
