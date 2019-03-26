@@ -327,6 +327,7 @@ public class FtpClientAndServer extends JPanel {
      */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        //g.drawString(String str, int x, int y)
 
     }
 }

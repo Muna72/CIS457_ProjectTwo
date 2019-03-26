@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.Timer;
+import java.io.*;
 import java.util.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
@@ -10,22 +10,25 @@ import java.awt.event.WindowEvent;
     /**
      *
      * @author Muna Gigowski
-     * @version 1.0 (September 2018)
+     * @version 1.0 (March 2019)
      */
-    public class GameGUI extends JFrame implements ActionListener, Runnable {
+    public class FtpGUI extends JFrame implements ActionListener, Runnable {
 
 
         //Declaring instance variables
         private int DELAY = 20;
         private boolean isRunning;
         private boolean firstTimeStartPressed;
-        private boolean loop = true;
-        private double totalTime;
-        private double timeLeft;
-        private double moveForwardTime;
-        public Timer simTimer;
-        private Random r = new Random();
         DecimalFormat df = new DecimalFormat("#.00");
+        String[][][] availableFileInfo;
+
+       /* Object[][] data =
+                {
+                        {backIcon, "BACK"},
+                        {exitIcon, "EXIT"},
+                        {forwardIcon, "FORWARD"},
+                }; */
+
         private JPanel input;
         FtpClientAndServer connectionInfo;
         FtpClientAndServer cmdLine;
@@ -47,6 +50,9 @@ import java.awt.event.WindowEvent;
 
         //define JComboBoxes
         JComboBox<String> speedSelection;
+
+        //define JTable
+        JTable fileInfo;
 
         //define JLabels
         private JLabel serverHostnameLabel;
@@ -71,7 +77,7 @@ import java.awt.event.WindowEvent;
          */
         public static void main(String[] args) {
             try {
-                GameGUI gui = new GameGUI();
+                FtpGUI gui = new FtpGUI();
                 gui.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 gui.setTitle("FTP Client");
                 gui.setPreferredSize(new Dimension(1800, 1000));
@@ -101,10 +107,10 @@ import java.awt.event.WindowEvent;
         /**
          * Class constructor initializes instance variables
          */
-        public GameGUI() {
+        public FtpGUI() {
 
-            isRunning = false;
             firstTimeStartPressed = true;
+            isRunning = false;
 
             setLayout(new GridBagLayout());
             GridBagConstraints position = new GridBagConstraints();
@@ -147,7 +153,7 @@ import java.awt.event.WindowEvent;
             font = new Font("SansSerif Bold", Font.BOLD, 13);
 
             String[] speedOptions = new String[] {"Low", "Medium",
-                    "High", "Rush Hour"};
+                    "High"};
 
 
             speedSelection = new JComboBox<>(speedOptions);
@@ -196,6 +202,14 @@ import java.awt.event.WindowEvent;
             position = makeConstraints(0, 3, 1, 1, GridBagConstraints.LINE_START);
             position.insets =  new Insets(10, -110, 0, 20);
             searchArea.add(keywordLabel, position);
+
+            String[] columnNames = {"Speed", "Hostname", "Filename"};
+
+            fileInfo = new JTable(availableFileInfo, columnNames);
+            keywordLabel.setFont(font);
+            position = makeConstraints(0, 3, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(10, -110, 0, 20);
+            searchArea.add(fileInfo, position);
 
             commandLabel = new JLabel("TBD");
             commandLabel.setFont(font);
@@ -306,8 +320,13 @@ import java.awt.event.WindowEvent;
 
             //set running variable to false if STOP button
             if (e.getSource() == connect) {
-                connectionInfo.connectCentralServerStartLocalUser(userName.getText(), serverHostName.getText(),
-                        portNum.getText(), speedSelection.getSelectedItem().toString(), hostName.getText());
+                if(!serverHostName.getText().equals("") && !portNum.getText().equals("") &&
+                !userName.getText().equals("") && !hostName.getText().equals("")) {
+                    connectionInfo.connectCentralServerStartLocalUser(userName.getText(), serverHostName.getText(),
+                            portNum.getText(), speedSelection.getSelectedItem().toString(), hostName.getText());
+                } else {
+                    JOptionPane.showMessageDialog(null, "All connection setup fields must have values");
+                }
             }
 
             if (e.getSource() == search) {
@@ -344,7 +363,7 @@ import java.awt.event.WindowEvent;
 
                 //TODO do we even need this?
 
-                while(loop) {
+                while(true) {
 
                     //update simulation if it is running
                     if (isRunning) {
