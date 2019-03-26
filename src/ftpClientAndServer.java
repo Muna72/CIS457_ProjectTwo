@@ -1,8 +1,11 @@
+import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import java.lang.Math;
+import java.util.List;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -317,6 +320,15 @@ public class FtpClientAndServer extends JPanel {
         loggedIn = false;
         
 	}
+
+    /**
+     * Method to paint the file information
+     * @param g for graphics object
+     */
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+    }
 }
 //Stores information for available files that matches in the search.
 class AvailableFile {

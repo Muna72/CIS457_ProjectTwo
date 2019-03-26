@@ -20,11 +20,9 @@ import java.awt.event.WindowEvent;
         private boolean isRunning;
         private boolean firstTimeStartPressed;
         private boolean loop = true;
-        private double secsTillNextVehicle;
         private double totalTime;
         private double timeLeft;
         private double moveForwardTime;
-        private double uCarTime;
         public Timer simTimer;
         private Random r = new Random();
         DecimalFormat df = new DecimalFormat("#.00");
@@ -58,6 +56,7 @@ import java.awt.event.WindowEvent;
         private JLabel speedLabel;
         private JLabel keywordLabel;
         private JLabel commandLabel;
+        private JLabel inputLabel;
 
 
         //define menu items
@@ -84,8 +83,8 @@ import java.awt.event.WindowEvent;
                     public void windowClosing(WindowEvent e) {
 
                         int dialogResult = JOptionPane.showConfirmDialog(gui,
-                                "Closing window while simulation is running" +
-                                        " will cause you to lose all simulation data. Proceed in closing?", "Close Window?",
+                                "Closing window while client is running" +
+                                        " will cause you to lose all data. Proceed in closing?", "Close Window?",
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.QUESTION_MESSAGE);
                         if (dialogResult == JOptionPane.YES_OPTION) {
@@ -106,9 +105,6 @@ import java.awt.event.WindowEvent;
 
             isRunning = false;
             firstTimeStartPressed = true;
-            secsTillNextVehicle = 1000 * 5;
-            uCarTime = 10200;
-            moveForwardTime = 500;
 
             setLayout(new GridBagLayout());
             GridBagConstraints position = new GridBagConstraints();
@@ -303,98 +299,41 @@ import java.awt.event.WindowEvent;
             }
 
             //set running variable to true if START button
-            if (e.getSource() == start) {
-                if (firstTimeStartPressed) {
-                    isRunning = true;
-                    new Thread(this).start();
-                    firstTimeStartPressed = false;
-                } else {
-                    simTimer.start();
-                }
+            if (e.getSource() == go) {
+                connectionInfo.setCommand(command.getText());
             }
 
 
             //set running variable to false if STOP button
-            if (e.getSource() == stop) {
-                isRunning = false;
-                simTimer.stop();
+            if (e.getSource() == connect) {
+                connectionInfo.connectCentralServerStartLocalUser(userName.getText(), serverHostName.getText(),
+                        portNum.getText(), speedSelection.getSelectedItem().toString(), hostName.getText());
+            }
+
+            if (e.getSource() == search) {
+                connectionInfo.search(keyword.getText());
+                connectionInfo.repaint();
             }
 
             //reset simulation if RESET menu item
             if (e.getSource() == reset) {
-                trafficMap.reset();
-                firstTimeStartPressed = true;
-                out1.setText(trafficMap.getFinished() + " with max = 80");
-                out2.setText("TBD");
-                out3.setText("TBD");
-                out4.setText("TBD");
-                out5.setText("TBD");
-                out6.setText("TBD");
-                out7.setText("TBD");
+                //out2.setText("TBD");
+                //out3.setText("TBD");
+                //out4.setText("TBD");
             }
-
-            //set route congestion level based on user input
-            if (e.getSource() == congestionLevel) {
-                isRunning = false;
-                if (congestionLevel.getSelectedItem().toString() == "Low") {
-                    secsTillNextVehicle = 1000 * 5;
-                }
-                if (congestionLevel.getSelectedItem().toString() == "Medium") {
-                    secsTillNextVehicle = 1000 * 3;
-                }
-                if (congestionLevel.getSelectedItem().toString() == "High") {
-                    secsTillNextVehicle = 1000 * 2;
-                }
-                if (congestionLevel.getSelectedItem().toString() == "Rush Hour") {
-                    secsTillNextVehicle = 1000 * 1;
-                }
-            }
-
-            //set weather condition variables based on user input
-            if (e.getSource() == weatherConditions) {
-                isRunning = false;
-                switch (weatherConditions.getSelectedItem().toString()) {
-                    case "Clear Day":
-                        moveForwardTime = 500;
-                        break;
-                    case "Light Rain":
-                        moveForwardTime = 700;
-                        break;
-                    case "Light Snow":
-                        moveForwardTime = 700;
-                        break;
-                    case "Heavy Rain":
-                        moveForwardTime = 800;
-                        break;
-                    case "Heavy Snow":
-                        moveForwardTime = 1000;
-                        break;
-                    case "Fog":
-                        moveForwardTime = 700;
-                        break;
-                    default:
-                        moveForwardTime = 500;
-                        break;
-                }
-            }
-
 
             //update GUI
-            trafficMap.repaint();
+            //object.repaint();
         }
         /**
          * Method to update stats in the GUI
          */
         public void updateGUI() {
 
-            //Will up actively as simulation runs
-            out1.setText(trafficMap.getFinished() + " with max = 80");
-            out2.setText(String.valueOf(trafficMap.getNumLightsRun()));
-            out3.setText(String.valueOf(trafficMap.getNumOfAccidents()));
-            out4.setText(df.format(trafficMap.getAvgStoppedTime()) + " seconds");
-            out5.setText(df.format(trafficMap.getAvgVehicleSpeed()) + " mph");
-            out6.setText(df.format(trafficMap.getUserThruTime()) + " seconds");
-            out7.setText(df.format(trafficMap.getTotalAvgVehicleTime()) + " seconds");
+            //Will actively update
+            //out2.setText("TBD");
+            //out3.setText("TBD");
+            //out4.setText("TBD");
         }
 
         /**
@@ -403,35 +342,7 @@ import java.awt.event.WindowEvent;
         public void run() {
             try {
 
-                totalTime = 1000 * 69; //set 50 seconds simulation run time (for now)
-                trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
-                trafficMap.setTotalTime(totalTime);
-                trafficMap.setTimeForUserCar(uCarTime);
-                trafficMap.setLTime(moveForwardTime);
-                trafficMap.setVTime(secsTillNextVehicle*0.1*r.nextGaussian() + secsTillNextVehicle);
-
-                timeLeft = totalTime;
-
-                simTimer = new Timer(DELAY,new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-
-                        trafficMap.setSimTimeLeft(timeLeft);
-                        trafficMap.takeAction();
-
-                        timeLeft = timeLeft - DELAY;
-
-                        if (timeLeft <= 0) {
-                            simTimer.stop();
-                            updateGUI();
-                            isRunning = false;
-                            JOptionPane.showMessageDialog(null, "Simulation Over");
-                        }
-                        else {
-                            updateGUI();
-                        }
-                    }
-                });
-                simTimer.start();
+                //TODO do we even need this?
 
                 while(loop) {
 
