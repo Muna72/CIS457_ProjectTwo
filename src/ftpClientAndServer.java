@@ -58,7 +58,6 @@ public class FtpClientAndServer {
 //need to figure out about multiple central servers adding to the filelist or just those on localhost running central server.
 
 
-
 /****
  * Connects to the central server using data from JPanels.
  * Starts the local FTP server using data from JPanels.
@@ -234,7 +233,6 @@ public class FtpClientAndServer {
         } catch (IOException e) {
             e.printStrackTrace();
         }
-
         if (availableFiles.isEmpty()) {
             return false;
         } else {
@@ -247,68 +245,78 @@ public class FtpClientAndServer {
     }
     //Checks to see if the file request is an available file on the server.
     //If so it will form a socket with the correct server and download the file.
-    public boolean retrieve(String file) throws UnknownHostException, IOException {
+    public boolean retrieve(String fileCommand) throws UnknownHostException, IOException {
         StringTokenizer tokens;
-        boolean downloaded = false;
-        for(int i = 0, i < availableFiles.size(); i++) {
-            //looks through the entire availableFile list searching for a matching file to the one we want.
-            //Requires correct fileName and username.
-            if(availableFiles.get(i).fileName.equals(file) && !availableFiles.get(i).hostUserName.equals(userName)) {
-                AvailableFile targetFile = availableFiles.get(i);
-                InetAddress ip = InetAddress.getByName(availableFiles.get(i).hostName);
-                //Socket connection to server containing file.
-                Socket retr = new Socket(ip, targetFile.port);
+        StringTokenzer commandTokens;
+        String commandResponse = new StringTokenizer(commandTokens);
+        String commandType = nextToken();
+        String file = nextToken();
+        if(commandType.equals("retr")) {
+            boolean downloaded = false;
+            for(int i = 0, i < availableFiles.size(); i++) {
+                //looks through the entire availableFile list searching for a matching file to the one we want.
+                //Requires correct fileName and username.
+                if(availableFiles.get(i).fileName.equals(file) && !availableFiles.get(i).hostUserName.equals(userName)) {
+                    AvailableFile targetFile = availableFiles.get(i);
+                    InetAddress ip = InetAddress.getByName(availableFiles.get(i).hostName);
+                    //Socket connection to server containing file.
+                    Socket retr = new Socket(ip, targetFile.port);
 
-                DataOutputStream dos = new DataOutputStream(retr.getOutPutStream());
-                DataInputStream dis = new DataInputStream(retr.getInPutStream());
+                    DataOutputStream dos = new DataOutputStream(retr.getOutPutStream());
+                    DataInputStream dis = new DataInputStream(retr.getInPutStream());
 
-                String command = "retr: " + file;
-                dos.writeUTF(command);
+                    String command = "retr: " + file;
+                    dos.writeUTF(command);
 
-                String fullResponseInput = dis.readUTF();
-                tokens = new StringTokenizer(fullResponseInput);
-                //Parses in status code indicating if server has file.
-                String response = tokens.nextToken();
-                //Parses in fileSize from String token.
-                int fileSize = Integer.parseInt(tokens.nextToken());
-                //The internet recommended keeping the fileSize above the actual fileSize as a precaution.
-                //1 kb bigger then actual fileSize.
-                filesSize = fileSize + 1000;
+                    String fullResponseInput = dis.readUTF();
+                    tokens = new StringTokenizer(fullResponseInput);
+                    //Parses in status code indicating if server has file.
+                    String response = tokens.nextToken();
+                    //Parses in fileSize from String token.
+                    int fileSize = Integer.parseInt(tokens.nextToken());
+                    //The internet recommended keeping the fileSize above the actual fileSize as a precaution.
+                    //1 kb bigger then actual fileSize.
+                    filesSize = fileSize + 1000;
 
-                if(!response.equal("404")) {
-                    File newFile = new File("./" + file);
-                    int bytesRead;
-                    int current = 0;
-                    FileOutputStream fos;
-                    BufferedOutputStream bos;
-                    try {
-                        byte [] myByteArray = new byte [fileSize];
-                        InputStream is = retr.getInPutStream();
-                        //this part left me with questions because the online example used poor conventions.
-                        //https://www.rgagnon.com/javadetails/java-0542.html
-                        fos = new FileOutputStream(newFile);
-                        bos = new BufferedOutputStream(fos);
-                        bytesRead = is.read(myByteArray,0,myByteArray.length);
-                        current = bytesRead;
+                    if(!response.equal("404")) {
+                        File newFile = new File("./" + file);
+                        int bytesRead;
+                        int current = 0;
+                        FileOutputStream fos;
+                        BufferedOutputStream bos;
+                        try {
+                            byte [] myByteArray = new byte [fileSize];
+                            InputStream is = retr.getInPutStream();
+                            //this part left me with questions because the online example used poor conventions.
+                            //https://www.rgagnon.com/javadetails/java-0542.html
+                            fos = new FileOutputStream(newFile);
+                            bos = new BufferedOutputStream(fos);
+                            bytesRead = is.read(myByteArray,0,myByteArray.length);
+                            current = bytesRead;
 
-                        do { 
-                            bytesRead =
-                            is.read(myByteArray, current, (myByteArray.length-current));
-                            if(bytesRead >= 0) current += bytesRead;
-                        } while(current < fileSize);
-                    //Might use finally to close streams and sockets.
-                    } catch (IOException e) {
-                        e.printStackTrace;
+                            do { 
+                                bytesRead =
+                                is.read(myByteArray, current, (myByteArray.length-current));
+                                if(bytesRead >= 0) current += bytesRead;
+                            } while(current < fileSize);
+                        //Might use finally to close streams and sockets.
+                        } catch (IOException e) {
+                            e.printStackTrace;
+                        }
+                        fos.close();
+                        bos.close();
+                    } else {
+                        System.out.println("File Not Found!");
                     }
-                    fos.close();
-                    bos.close();
-                } else {
-                    System.out.println("File Not Found!");
+                    retr.close();
                 }
-                retr.close();
             }
+            return downloaded;
+        } 
+        if(commandResponse.equals("quit") || commandResponse.equals("QUIT")) {
+            quit();
+            return downloaded;
         }
-        return downloaded;
     }
     //Sends a message to the central serval closing the socket connection
     //I believe swing interface would also close upon hitting a disconnect button but picture on profs doc looks like a central server quit via command.

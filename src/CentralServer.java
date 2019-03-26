@@ -66,10 +66,10 @@ public class CentralServer {
 class ClientHandler implements Runnable {
     Socket connectionSocket;
     String fromClient;
-    String clientName;
-    String hostName;
-    int port;
-    String speed;
+    public String clientName;
+    public String hostName;
+    public int port;
+    public String speed;
     BufferedReader dis;
     DataInputStream in;
     DataOutputStream out;
