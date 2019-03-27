@@ -1,7 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import javax.swing.table.*;
 import java.util.*;
+import java.awt.Color;
 import java.awt.event.*;
 import java.text.DecimalFormat;
 import javax.swing.border.*;
@@ -20,18 +22,11 @@ import java.awt.event.WindowEvent;
         private boolean isRunning;
         private boolean firstTimeStartPressed;
         DecimalFormat df = new DecimalFormat("#.00");
-        String[][][] availableFileInfo;
-
-       /* Object[][] data =
-                {
-                        {backIcon, "BACK"},
-                        {exitIcon, "EXIT"},
-                        {forwardIcon, "FORWARD"},
-                }; */
+        ArrayList<Object>availableFileInfo;
 
         private JPanel input;
-        FtpClientAndServer connectionInfo;
-        FtpClientAndServer cmdLine;
+        ftpClientAndServer connectionInfo;
+        ftpClientAndServer cmdLine;
         private JPanel commandArea;
         private JPanel searchArea;
 
@@ -51,8 +46,9 @@ import java.awt.event.WindowEvent;
         //define JComboBoxes
         JComboBox<String> speedSelection;
 
-        //define JTable
+        //define JTable and tableModel
         JTable fileInfo;
+        DefaultTableModel tableModel;
 
         //define JLabels
         private JLabel serverHostnameLabel;
@@ -63,6 +59,8 @@ import java.awt.event.WindowEvent;
         private JLabel keywordLabel;
         private JLabel commandLabel;
         private JLabel inputLabel;
+        private JLabel fileSearch;
+        private JLabel ftpConsole;
 
 
         //define menu items
@@ -80,7 +78,7 @@ import java.awt.event.WindowEvent;
                 FtpGUI gui = new FtpGUI();
                 gui.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 gui.setTitle("FTP Client");
-                gui.setPreferredSize(new Dimension(1800, 1000));
+                gui.setPreferredSize(new Dimension(1700, 1000));
                 gui.pack();
                 gui.setVisible(true);
                 gui.addWindowListener(new WindowAdapter() {
@@ -111,6 +109,7 @@ import java.awt.event.WindowEvent;
 
             firstTimeStartPressed = true;
             isRunning = false;
+            availableFileInfo = new ArrayList<Object>();
 
             setLayout(new GridBagLayout());
             GridBagConstraints position = new GridBagConstraints();
@@ -118,37 +117,50 @@ import java.awt.event.WindowEvent;
 
             //Adding all panels to JFrame
             input = new JPanel(new GridBagLayout());
-            input.setBorder(new EmptyBorder(30, 0, 30, 120));
-            position = makeConstraints(10, 0, 1, 1, GridBagConstraints.LINE_END);
+            input.setBackground(Color.RED);
+            input.setBorder(new EmptyBorder(15, 0, 30, 20));
+            input.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+            position = makeConstraints(10, 0, 1, 3, GridBagConstraints.LINE_END);
+            //position.insets =  new Insets(-100, 0, 0, 0);
             add(input,position);
 
             searchArea = new JPanel(new GridBagLayout());
-            searchArea.setBorder(new EmptyBorder(30, 200, 0, 120));
-            position = makeConstraints(10, 5, 1, 1, GridBagConstraints.LINE_END);
+            searchArea.setBackground(Color.BLUE);
+            searchArea.setBorder(new EmptyBorder(10, 370, 0, 20));
+            position = makeConstraints(10, 2, 1, 3, GridBagConstraints.LINE_END);
             add(searchArea,position);
 
             commandArea = new JPanel(new GridBagLayout());
-            commandArea.setBorder(new EmptyBorder(30, 200, 0, 120));
-            position = makeConstraints(10, 5, 1, 1, GridBagConstraints.LINE_END);
+            commandArea.setBackground(Color.BLACK);
+            commandArea.setBorder(new EmptyBorder(10, 370, 0, 20));
+            position = makeConstraints(10, 4, 1, 3, GridBagConstraints.LINE_END);
             add(commandArea,position);
 
-            connectionInfo = new FtpClientAndServer();
-            connectionInfo.setMinimumSize(connectionInfo.getPreferredSize());
-            position = makeConstraints(0, 0, 10, 10, GridBagConstraints.FIRST_LINE_START);
-            searchArea.add(connectionInfo, position);
-
-            cmdLine = new FtpClientAndServer();
-            cmdLine.setMinimumSize(cmdLine.getPreferredSize());
+            cmdLine = new ftpClientAndServer();
             position = makeConstraints(0, 0, 10, 10, GridBagConstraints.FIRST_LINE_START);
             commandArea.add(cmdLine, position);
 
             //Adding input text fields and labels
-            inputLabel = new JLabel("Input Information");
-            inputLabel.setBorder(new EmptyBorder(10, 0, 30, 0));
+            inputLabel = new JLabel("Connection Input Information");
+            inputLabel.setBorder(new EmptyBorder(10, 0, 50, 0));
             inputLabel.setFont(font);
             position = makeConstraints(2, 1, 1, 1, GridBagConstraints.LINE_START);
             position.insets =  new Insets(0, 120, 0, 20);
             input.add(inputLabel, position);
+
+            fileSearch = new JLabel("File Search");
+            fileSearch.setBorder(new EmptyBorder(10, 0, 50, 0));
+            fileSearch.setFont(font);
+            position = makeConstraints(2, 0, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(0, 100, 0, 20);
+            searchArea.add(fileSearch, position);
+
+            ftpConsole = new JLabel("FTP Console");
+            ftpConsole.setBorder(new EmptyBorder(10, 0, 50, 0));
+            ftpConsole.setFont(font);
+            position = makeConstraints(2, 0, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(0, 100, 0, 20);
+            commandArea.add(ftpConsole, position);
 
             font = new Font("SansSerif Bold", Font.BOLD, 13);
 
@@ -158,16 +170,24 @@ import java.awt.event.WindowEvent;
 
             speedSelection = new JComboBox<>(speedOptions);
             speedSelection.setMinimumSize(speedSelection.getPreferredSize());
-            position = makeConstraints(3, 3, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(0, -20, 0, 20);
+            position = makeConstraints(10, 2, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(20, 100, 0, 0);
             input.add(speedSelection, position);
+
+            String[] columnNames = {"Speed", "Hostname", "Filename"};
+
+            tableModel = new DefaultTableModel(columnNames, 0);
+            fileInfo = new JTable(tableModel);
+            position = makeConstraints(0, 3, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(10, -110, 0, 20);
+            searchArea.add(fileInfo, position);
 
             //Adding stats to searchArea JPanel
             serverHostnameLabel = new JLabel("Server Hostname:");
             font = new Font("SansSerif Bold", Font.BOLD, 14);
             serverHostnameLabel.setFont(font);
-            position = makeConstraints(1, 0, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(0, -185, 0, 0);
+            position = makeConstraints(1, 1, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(40, 5, 0, 0);
             serverHostnameLabel.setBorder(new EmptyBorder(10, 0, 30, 0));
             input.add(serverHostnameLabel, position);
 
@@ -175,41 +195,33 @@ import java.awt.event.WindowEvent;
 
             portNumLabel = new JLabel("Port:");
             portNumLabel.setFont(font);
-            position = makeConstraints(0, 1, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(0, -110, 0, 20);
+            position = makeConstraints(3, 1, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(30, -20, 0, 20);
             input.add(portNumLabel, position);
 
             userNameLabel = new JLabel("Username:");
             userNameLabel.setFont(font);
-            position = makeConstraints(2, 1, 1, 1, GridBagConstraints.LINE_START);
+            position = makeConstraints(1, 2, 1, 1, GridBagConstraints.LINE_START);
             position.insets =  new Insets(10, 0, 0, 20);
             input.add(userNameLabel, position);
 
             hostNameLabel = new JLabel("Hostname:");
             hostNameLabel.setFont(font);
-            position = makeConstraints(0, 2, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(0, -110, 0, 20);
+            position = makeConstraints(3, 2, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(15, -80, 0, 20);
             input.add(hostNameLabel, position);
 
             speedLabel = new JLabel("Speed:");
             speedLabel.setFont(font);
-            position = makeConstraints(2, 2, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(10, 0, 0, 20);
+            position = makeConstraints(10, 2, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(15, 50, 0, 20);
             input.add(speedLabel, position);
 
             keywordLabel = new JLabel("Keyword:");
             keywordLabel.setFont(font);
-            position = makeConstraints(0, 3, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(10, -110, 0, 20);
+            position = makeConstraints(0, 1, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(10, -250, 0, 20);
             searchArea.add(keywordLabel, position);
-
-            String[] columnNames = {"Speed", "Hostname", "Filename"};
-
-            fileInfo = new JTable(availableFileInfo, columnNames);
-            keywordLabel.setFont(font);
-            position = makeConstraints(0, 3, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(10, -110, 0, 20);
-            searchArea.add(fileInfo, position);
 
             commandLabel = new JLabel("TBD");
             commandLabel.setFont(font);
@@ -219,60 +231,57 @@ import java.awt.event.WindowEvent;
 
 
             //Place the textfields
-            serverHostName = new JTextField();
-            serverHostName.setForeground(Color.GREEN);
-            position = makeConstraints(3, 7, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(40, -170, 0, 20);
+            serverHostName = new JTextField("", 20);
+            position = makeConstraints(2, 1, 1, 1, GridBagConstraints.LINE_START);
+            //erverHostName.setMinimumSize(serverHostName.getPreferredSize());
+            position.insets =  new Insets(40, 10, 0, 20);
             input.add(serverHostName, position);
 
-            portNum = new JTextField();
-            portNum.setForeground(Color.GREEN);
-            position = makeConstraints(3, 7, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(40, -170, 0, 20);
+            portNum = new JTextField("", 10);
+            position = makeConstraints(3, 1, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(40, 20, 0, 20);
             input.add(portNum, position);
 
-            userName = new JTextField();
-            userName.setForeground(Color.GREEN);
-            position = makeConstraints(3, 7, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(40, -170, 0, 20);
+            userName = new JTextField("", 15);
+            position = makeConstraints(2, 2, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(10, 0, 0, 20);
             input.add(userName, position);
 
-            hostName = new JTextField();
-            hostName.setForeground(Color.GREEN);
-            position = makeConstraints(3, 7, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(40, -170, 0, 20);
+            hostName = new JTextField("", 20);
+            position = makeConstraints(4, 2, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(10, -30, 0, 20);
             input.add(hostName, position);
 
-            keyword = new JTextField();
+            keyword = new JTextField("", 20);
             keyword.setForeground(Color.GREEN);
-            position = makeConstraints(3, 7, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(40, -170, 0, 20);
+            position = makeConstraints(1, 1, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(40, 0, 0, 20);
             searchArea.add(keyword, position);
 
-            command = new JTextField();
+            command = new JTextField("", 20);
             command.setForeground(Color.GREEN);
-            position = makeConstraints(3, 7, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(40, -170, 0, 20);
+            position = makeConstraints(0, 1, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(40, 0, 0, 20);
             commandArea.add(command, position);
 
             //place each button
             connect = new JButton( "Connect" );
             connect.setForeground(Color.GREEN);
-            position = makeConstraints(3, 7, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(40, -170, 0, 20);
+            position = makeConstraints(10, 1, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(40, 100, 0, 20);
             input.add(connect, position);
 
             search = new JButton( "Search" );
             search.setForeground(Color.RED);
-            position = makeConstraints(4,8,1,1,GridBagConstraints.LINE_START);
-            position.insets =  new Insets(-26,-120,0,20);
+            position = makeConstraints(6,1,1,1,GridBagConstraints.LINE_START);
+            position.insets =  new Insets(6,0,0,20);
             searchArea.add(search, position);
 
             go = new JButton( "Go" );
             go.setForeground(Color.RED);
-            position = makeConstraints(4,8,1,1,GridBagConstraints.LINE_START);
-            position.insets =  new Insets(-26,-120,0,20);
-            input.add(go, position);
+            position = makeConstraints(3,1,1,1,GridBagConstraints.LINE_START);
+            position.insets =  new Insets(26,0,0,20);
+            commandArea.add(go, position);
 
             //create and add menu items
             menu = new JMenuBar();
@@ -314,7 +323,7 @@ import java.awt.event.WindowEvent;
 
             //set running variable to true if START button
             if (e.getSource() == go) {
-                connectionInfo.setCommand(command.getText());
+                //connectionInfo.setCommand(command.getText());
             }
 
 
@@ -322,8 +331,8 @@ import java.awt.event.WindowEvent;
             if (e.getSource() == connect) {
                 if(!serverHostName.getText().equals("") && !portNum.getText().equals("") &&
                 !userName.getText().equals("") && !hostName.getText().equals("")) {
-                    connectionInfo.connectCentralServerStartLocalUser(userName.getText(), serverHostName.getText(),
-                            portNum.getText(), speedSelection.getSelectedItem().toString(), hostName.getText());
+                   connectionInfo.connectCentralServerStartLocalUser(userName.getText(), serverHostName.getText(),
+                           portNum.getText(), speedSelection.getSelectedItem().toString(), hostName.getText());
                 } else {
                     JOptionPane.showMessageDialog(null, "All connection setup fields must have values");
                 }
@@ -331,7 +340,12 @@ import java.awt.event.WindowEvent;
 
             if (e.getSource() == search) {
                 connectionInfo.search(keyword.getText());
-                connectionInfo.repaint();
+                ArrayList<AvailableFile> files = connectionInfo.getAvailableFiles();
+                for(int i = 0; i < files.size(); ++i) {
+                    AvailableFile currentFile = files.get(i);
+                    Object[] objs = {currentFile.getSpeed(), currentFile.getHostName(), currentFile.getFileName()};
+                    tableModel.addRow(objs);
+                }
             }
 
             //reset simulation if RESET menu item

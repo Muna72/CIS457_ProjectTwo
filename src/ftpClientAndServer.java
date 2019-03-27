@@ -5,8 +5,6 @@ import java.util.*;
 import javax.swing.*;
 import java.lang.Math;
 import java.util.List;
-
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -351,5 +349,17 @@ class AvailableFile {
         this.port = port;
         this.fileName = fileName;
         this.speed = speed;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 }
