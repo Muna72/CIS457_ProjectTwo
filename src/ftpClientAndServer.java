@@ -34,6 +34,9 @@ public class ftpClientAndServer extends JPanel {
     //Needs to be generated not input.
     private String localPort;
     private Boolean loggedIn;
+
+    //TODO hey Quinn, add display information from each command to this arraylist (also ip addesses, etc) - see pic from rubric
+    private ArrayList<String> stringsToDisplay = new ArrayList<String>();
     
     
     //ehhh just gonna hardcode a local port
@@ -292,7 +295,7 @@ public class ftpClientAndServer extends JPanel {
                             fos.close();
                             bos.close();
                         //Might use finally to close streams and sockets.
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                         // fos.close();
@@ -331,8 +334,11 @@ public class ftpClientAndServer extends JPanel {
      */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        //g.drawString(String str, int x, int y)
 
+        for(int y = 0; y < stringsToDisplay.size(); ++y) {
+            String curr = stringsToDisplay.get(y);
+            g.drawString(curr + "\n", 1, 1);
+        }
     }
 }
 //Stores information for available files that matches in the search.

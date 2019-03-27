@@ -131,13 +131,15 @@ import java.awt.event.WindowEvent;
             add(searchArea,position);
 
             commandArea = new JPanel(new GridBagLayout());
-            commandArea.setBackground(Color.BLACK);
+            commandArea.setBackground(Color.YELLOW);
             commandArea.setBorder(new EmptyBorder(10, 370, 0, 20));
             position = makeConstraints(10, 4, 1, 3, GridBagConstraints.LINE_END);
             add(commandArea,position);
 
             cmdLine = new ftpClientAndServer();
-            position = makeConstraints(0, 0, 10, 10, GridBagConstraints.FIRST_LINE_START);
+            cmdLine.setPreferredSize(new Dimension(600,200));
+            cmdLine.setBorder(new EmptyBorder(10, 10, 10, 20));
+            position = makeConstraints(0, 3, 1, 1, GridBagConstraints.FIRST_LINE_START);
             commandArea.add(cmdLine, position);
 
             //Adding input text fields and labels
@@ -156,15 +158,15 @@ import java.awt.event.WindowEvent;
             searchArea.add(fileSearch, position);
 
             ftpConsole = new JLabel("FTP Console");
-            ftpConsole.setBorder(new EmptyBorder(10, 0, 50, 0));
+            ftpConsole.setBorder(new EmptyBorder(10, 0, 20, 0));
             ftpConsole.setFont(font);
-            position = makeConstraints(2, 0, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(0, 100, 0, 20);
+            position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(0, 0, 0, 20);
             commandArea.add(ftpConsole, position);
 
             font = new Font("SansSerif Bold", Font.BOLD, 13);
 
-            String[] speedOptions = new String[] {"Low", "Medium",
+            String[] speedOptions = new String[] {"Ethernet", "Medium",
                     "High"};
 
 
@@ -223,17 +225,18 @@ import java.awt.event.WindowEvent;
             position.insets =  new Insets(10, -250, 0, 20);
             searchArea.add(keywordLabel, position);
 
-            commandLabel = new JLabel("TBD");
+            commandLabel = new JLabel("Enter Command: ");
             commandLabel.setFont(font);
-            position = makeConstraints(2, 3, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(10, 0, 0, 20);
+            commandLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
+            position = makeConstraints(0, 1, 1, 1, GridBagConstraints.LINE_START);
+            position.insets =  new Insets(0, -310, 0, 20);
             commandArea.add(commandLabel, position);
 
 
             //Place the textfields
             serverHostName = new JTextField("", 20);
             position = makeConstraints(2, 1, 1, 1, GridBagConstraints.LINE_START);
-            //erverHostName.setMinimumSize(serverHostName.getPreferredSize());
+            //serverHostName.setMinimumSize(serverHostName.getPreferredSize());
             position.insets =  new Insets(40, 10, 0, 20);
             input.add(serverHostName, position);
 
@@ -261,7 +264,7 @@ import java.awt.event.WindowEvent;
             command = new JTextField("", 20);
             command.setForeground(Color.GREEN);
             position = makeConstraints(0, 1, 1, 1, GridBagConstraints.LINE_START);
-            position.insets =  new Insets(40, 0, 0, 20);
+            position.insets =  new Insets(0, -200, 0, 20);
             commandArea.add(command, position);
 
             //place each button
@@ -273,13 +276,13 @@ import java.awt.event.WindowEvent;
 
             search = new JButton( "Search" );
             search.setForeground(Color.RED);
-            position = makeConstraints(6,1,1,1,GridBagConstraints.LINE_START);
+            position = makeConstraints(4,1,1,1,GridBagConstraints.LINE_START);
             position.insets =  new Insets(6,0,0,20);
             searchArea.add(search, position);
 
             go = new JButton( "Go" );
             go.setForeground(Color.RED);
-            position = makeConstraints(3,1,1,1,GridBagConstraints.LINE_START);
+            position = makeConstraints(1,1,1,1,GridBagConstraints.LINE_START);
             position.insets =  new Insets(26,0,0,20);
             commandArea.add(go, position);
 
@@ -307,6 +310,10 @@ import java.awt.event.WindowEvent;
             file.addActionListener(this);
             quit.addActionListener(this);
             reset.addActionListener(this);
+
+            //disable buttons by default
+            search.setEnabled(false);
+            go.setEnabled(false);
         }
 
         /**
@@ -323,7 +330,8 @@ import java.awt.event.WindowEvent;
 
             //set running variable to true if START button
             if (e.getSource() == go) {
-                //connectionInfo.setCommand(command.getText());
+                connectionInfo.retrieve(command.getText());
+                //TODO also need setCommand method so I can get the command class var here
             }
 
 
@@ -333,6 +341,7 @@ import java.awt.event.WindowEvent;
                 !userName.getText().equals("") && !hostName.getText().equals("")) {
                    connectionInfo.connectCentralServerStartLocalUser(userName.getText(), serverHostName.getText(),
                            portNum.getText(), speedSelection.getSelectedItem().toString(), hostName.getText());
+                    search.setEnabled(true);
                 } else {
                     JOptionPane.showMessageDialog(null, "All connection setup fields must have values");
                 }
@@ -346,13 +355,7 @@ import java.awt.event.WindowEvent;
                     Object[] objs = {currentFile.getSpeed(), currentFile.getHostName(), currentFile.getFileName()};
                     tableModel.addRow(objs);
                 }
-            }
-
-            //reset simulation if RESET menu item
-            if (e.getSource() == reset) {
-                //out2.setText("TBD");
-                //out3.setText("TBD");
-                //out4.setText("TBD");
+                go.setEnabled(true);
             }
 
             //update GUI
@@ -367,29 +370,6 @@ import java.awt.event.WindowEvent;
             //out2.setText("TBD");
             //out3.setText("TBD");
             //out4.setText("TBD");
-        }
-
-        /**
-         * Run method called by the thread
-         */
-        public void run() {
-            try {
-
-                //TODO do we even need this?
-
-                while(true) {
-
-                    //update simulation if it is running
-                    if (isRunning) {
-
-
-                    }
-                    // pause between steps so it isn't too fast
-                    Thread.sleep(DELAY);
-                }
-            }
-            catch (InterruptedException ex) {
-            }
         }
 
         /**

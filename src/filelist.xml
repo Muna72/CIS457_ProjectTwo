@@ -4,4 +4,8 @@
 		<name>test.txt</name>
 		<description>Tester file description for transfer.</description>
 	</file>
+	<file>
+		<name>testtest.txt</name>
+		<description>Second test file</description>
+	</file>
 </filelist>
