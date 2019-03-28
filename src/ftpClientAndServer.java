@@ -34,8 +34,10 @@ public class ftpClientAndServer extends JPanel {
     //Needs to be generated not input.
     private String localPort;
     private Boolean loggedIn;
+    private String connectionInfo;
 
     //TODO hey Quinn, add display information from each command to this arraylist (also ip addesses, etc) - see pic from rubric
+    //Done! Errors caught as well!
     private ArrayList<String> stringsToDisplay = new ArrayList<String>();
     
     
@@ -65,7 +67,9 @@ public class ftpClientAndServer extends JPanel {
         InetAddress ip = InetAddress.getByName(serverHost);
         //Connection to the central Server.
         //I has questions about using serverHost and serverPort.
-        //CentralServer open on port 3158. 
+        //CentralServer open on port 3158.
+        connectionInfo = ">> Connecting to IP " + serverHost + " Port " + serverPort;
+        stringsToDisplay.add(connectionInfo);
         s = new Socket(ip, Integer.parseInt(serverPort));
         
         //Information of the client you would like to connect to.
@@ -80,6 +84,8 @@ public class ftpClientAndServer extends JPanel {
         //The connection stream that stores information about the client to be passed.
         //This will be parsed by each space with String Tokenizer.
         out.writeUTF(userName + "" + localHost + "" + speed + "" + localPort);
+        connectionInfo = "Succesfully connected to IP " + serverHost + " Port " + serverPort;
+        stringsToDisplay.add(connectionInfo);
 
         //Creates a filelist in the form of a text document.
         //Will need to develop a method of attaching filename and description in text file.
@@ -197,9 +203,7 @@ public class ftpClientAndServer extends JPanel {
         //tokens takes in a single available file from an array of available files/
         //It then parses and splits each element of the available file object based on 
         StringTokenizer tokens;
-
         try {
-
             //send the keyword to the output stream of the central server.
             out.writeUTF(keyword);
             String str = "";
@@ -236,6 +240,9 @@ public class ftpClientAndServer extends JPanel {
     public ArrayList<AvailableFile> getAvailableFiles() {
         return availableFiles;
     }
+    public ArrayList<String> getStringsToDisplay() {
+        return stringsToDisplay;
+    }
     //Checks to see if the file request is an available file on the server.
     //If so it will form a socket with the correct server and download the file.
     public boolean retrieve(String fileCommand) throws UnknownHostException, IOException {
@@ -244,6 +251,8 @@ public class ftpClientAndServer extends JPanel {
         String commandType = commandResponse.nextToken();
         String file = commandResponse.nextToken();
         boolean downloaded = false;
+        stringsToDisplay.add(">> " + fileCommand);
+    try {
         if(commandType.equals("retr")) {
             for(int i = 0; i < availableFiles.size(); i++) {
                 //looks through the entire availableFile list searching for a matching file to the one we want.
@@ -256,7 +265,7 @@ public class ftpClientAndServer extends JPanel {
 
                     DataOutputStream dos = new DataOutputStream(retr.getOutputStream());
                     DataInputStream dis = new DataInputStream(retr.getInputStream());
-
+                    
                     String command = "retr: " + file;
                     dos.writeUTF(command);
 
@@ -294,6 +303,9 @@ public class ftpClientAndServer extends JPanel {
                             } while(current < fileSize);
                             fos.close();
                             bos.close();
+                            dos.close();
+                            dis.close();
+                            stringsToDisplay.add("Sucessfully downloaded " + file);
                         //Might use finally to close streams and sockets.
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -311,6 +323,9 @@ public class ftpClientAndServer extends JPanel {
             quit();
             return false;
         }
+    } catch (Exception e) {
+        System.out.println("Error: Central Server must be connected and the search function must be utilized.");
+    }
         return downloaded;
     }
     //Sends a message to the central serval closing the socket connection
@@ -368,4 +383,5 @@ class AvailableFile {
     public String getFileName() {
         return fileName;
     }
+    
 }
