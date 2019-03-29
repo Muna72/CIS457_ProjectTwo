@@ -110,6 +110,7 @@ import java.awt.event.WindowEvent;
             firstTimeStartPressed = true;
             isRunning = false;
             availableFileInfo = new ArrayList<Object>();
+            connectionInfo = new ftpClientAndServer();
 
             setLayout(new GridBagLayout());
             GridBagConstraints position = new GridBagConstraints();
@@ -343,15 +344,12 @@ import java.awt.event.WindowEvent;
                 if(!serverHostName.getText().equals("") && !portNum.getText().equals("") &&
                 !userName.getText().equals("") && !hostName.getText().equals("")) {
                     try {
+                        System.out.println(connectionInfo);
                         connectionInfo.connectCentralServerStartLocalUser(userName.getText(), serverHostName.getText(),
                                 portNum.getText(), speedSelection.getSelectedItem().toString(), hostName.getText());
-                        System.out.println("username: " + userName.getText());
-                        System.out.println("server host name: " + serverHostName.getText());
-                        System.out.println("port num: " + portNum.getText());
-                        System.out.println("speed: " + speedSelection.getSelectedItem().toString());
-                        System.out.println("hostname: " + hostName.getText());
                         search.setEnabled(true);
                     } catch (Exception ex) {
+                        ex.printStackTrace();
                         System.out.println("Error setting up connection");
                     }
                 } else {
