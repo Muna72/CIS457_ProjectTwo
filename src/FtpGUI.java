@@ -330,8 +330,11 @@ import java.awt.event.WindowEvent;
 
             //set running variable to true if START button
             if (e.getSource() == go) {
-                connectionInfo.retrieve(command.getText());
-                //TODO also need setCommand method so I can get the command class var here
+                try {
+                    connectionInfo.retrieve(command.getText());
+                } catch (Exception ex) {
+                    System.out.println("Error retrieving file");
+                }
             }
 
 
@@ -339,9 +342,18 @@ import java.awt.event.WindowEvent;
             if (e.getSource() == connect) {
                 if(!serverHostName.getText().equals("") && !portNum.getText().equals("") &&
                 !userName.getText().equals("") && !hostName.getText().equals("")) {
-                   connectionInfo.connectCentralServerStartLocalUser(userName.getText(), serverHostName.getText(),
-                           portNum.getText(), speedSelection.getSelectedItem().toString(), hostName.getText());
-                    search.setEnabled(true);
+                    try {
+                        connectionInfo.connectCentralServerStartLocalUser(userName.getText(), serverHostName.getText(),
+                                portNum.getText(), speedSelection.getSelectedItem().toString(), hostName.getText());
+                        System.out.println("username: " + userName.getText());
+                        System.out.println("server host name: " + serverHostName.getText());
+                        System.out.println("port num: " + portNum.getText());
+                        System.out.println("speed: " + speedSelection.getSelectedItem().toString());
+                        System.out.println("hostname: " + hostName.getText());
+                        search.setEnabled(true);
+                    } catch (Exception ex) {
+                        System.out.println("Error setting up connection");
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "All connection setup fields must have values");
                 }
@@ -361,6 +373,15 @@ import java.awt.event.WindowEvent;
             //update GUI
             //object.repaint();
         }
+
+        /**
+         * Run method called by the thread
+         */
+        public void run() {
+
+
+        }
+
         /**
          * Method to update stats in the GUI
          */
