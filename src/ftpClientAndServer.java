@@ -57,8 +57,8 @@ public class ftpClientAndServer extends JPanel {
  * Starts the local FTP server using data from JPanels.
 ****/
     public void connectCentralServerStartLocalUser(String userName, String serverHost, String serverPort, String speed,
-        String localHost) throws IOException {
-
+        String localHost) {
+        try {
         //Creates a random local port between 50000 and 50010.
         //Might just hardcode a single localport for client/server to transfer to/from.;
         localPort = Integer.toString(50000);
@@ -198,7 +198,12 @@ public class ftpClientAndServer extends JPanel {
         }); 
         //Starts up the localServer. Instaniates the runnable thread.
         localServer.start();
+    } catch(IOException e) {
+        e.printStackTrace();
+        System.out.println("WHY U IOEXCEPTION");
     }
+}
+
     //Handles searching for the localFtpClient searched the Central Server for available files.
     //When keyword is typed into GUI search it run with keyword first.
     //Then getAvailableFiles() can be run and parsed to display files in swing panel.
