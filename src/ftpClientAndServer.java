@@ -69,8 +69,11 @@ public class ftpClientAndServer extends JPanel {
         //I has questions about using serverHost and serverPort.
         //CentralServer open on port 3158.
         connectionInfo = ">> Connecting to IP " + serverHost + " Port " + serverPort;
+        System.out.println("WHY U NO WORK?");
         stringsToDisplay.add(connectionInfo);
         s = new Socket(ip, Integer.parseInt(serverPort));
+        System.out.println("WHY U NO WORK? SOCKET EDITION");
+
         
         //Information of the client you would like to connect to.
         this.localHost = localHost;
