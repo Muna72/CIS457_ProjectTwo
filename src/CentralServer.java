@@ -15,7 +15,7 @@ public class CentralServer {
     public static void main(String[] args) throws IOException {
 
         try {
-            welcomeSocket = new ServerSocket(3158);
+            welcomeSocket = new ServerSocket(9876);
             System.out.println("Server is Up.");
         } catch (Exception e) {
             System.err.println("Error: Server was not started.");
@@ -79,6 +79,7 @@ class ClientHandler implements Runnable {
     }
 
     //Run method is overridden to allow multiple clients to use the server.
+    //yo this threading is bunk. fix it
     @Override
     public void run() {
         //connectionString coming from localFtpClient.
@@ -170,6 +171,8 @@ class ClientHandler implements Runnable {
             }
             //close connectionSocket
             this.connectionSocket.close();
+            in.close();
+            out.close();
             System.out.println(clientName + "has disconnected!");
         } catch (Exception e) {
             System.err.println(e);
