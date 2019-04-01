@@ -117,7 +117,7 @@ public class ftpClientAndServer extends JPanel {
                 e.printStackTrace();
             }
         } else {
-            //If no file is available output 404 and a console message.
+            //If not file is available output 404 and a console message.
             out.writeUTF("404");
             System.out.println(".txt Filelist is required.");
         }
