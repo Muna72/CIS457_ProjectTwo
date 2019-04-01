@@ -103,6 +103,7 @@ class ClientHandler implements Runnable {
 
             //reads in if the file has any files available for download.
             fileList = in.readUTF();
+            System.out.println("DOES IT READ IN FILELIST");
 
             //If no files are available fileList will equal only "404";
             //Might switch all "404" responses to a different number for clarity. Not technically a 404.

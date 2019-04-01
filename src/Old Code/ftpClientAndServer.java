@@ -42,11 +42,11 @@ public class ftpClientAndServer extends JPanel {
     
     
     //ehhh just gonna hardcode a local port
-    // public int getRandomLocalPort(double min, double max) {
-    // min = Math.ceil(min);
-    // max = Math.floor(max);
-    // return Math.floor((Math.random() * (max - min)) + min); //The maximum is exclusive and the minimum is inclusive
-    // }
+//    public double getRandomLocalPort(double min, double max) {
+//        min = Math.ceil(min);
+//        max = Math.floor(max);
+//        return Math.floor((Math.random() * (max - min)) + min); //The maximum is exclusive and the minimum is inclusive
+//    }
 
 
 //need to figure out about multiple central servers adding to the filelist or just those on localhost running central server.
@@ -61,7 +61,8 @@ public class ftpClientAndServer extends JPanel {
         try {
         //Creates a random local port between 50000 and 50010.
         //Might just hardcode a single localport for client/server to transfer to/from.;
-        localPort = Integer.toString(50000);
+        localPort = "" + (new Random().nextInt(100)+50000);
+        System.out.println(localPort);
         
         //IP address obtained from JPanel
         InetAddress ip = InetAddress.getByName(serverHost);
@@ -86,7 +87,7 @@ public class ftpClientAndServer extends JPanel {
 
         //The connection stream that stores information about the client to be passed.
         //This will be parsed by each space with String Tokenizer.
-        out.writeUTF(userName + " " + localHost + " " + speed + " " + localPort);
+        out.writeUTF(userName + " " + localHost + " " + speed + " " + localPort + " ");
         connectionInfo = "Succesfully connected to IP " + serverHost + " Port " + serverPort;
         stringsToDisplay.add(connectionInfo);
 
@@ -109,7 +110,7 @@ public class ftpClientAndServer extends JPanel {
                 List<Node> nodes = document.selectNodes("/filelist/file");
                 //This sends the dataOutputStream the "200" success status code and the size of the nodes.
                 System.out.println("TEST AFTER NODES");
-                out.writeUTF("200" + "" + nodes.size());
+                out.writeUTF("200" + " " + nodes.size());
 
                 for(Node node : nodes) {
                     String fileName = node.selectSingleNode("name").getText();
@@ -273,6 +274,7 @@ public class ftpClientAndServer extends JPanel {
                     AvailableFile targetFile = availableFiles.get(i);
                     InetAddress ip = InetAddress.getByName(availableFiles.get(i).hostName);
                     //Socket connection to server containing file.
+                    System.out.println("TATERTOTTTSSS");
                     Socket retr = new Socket(ip, targetFile.port);
 
                     DataOutputStream dos = new DataOutputStream(retr.getOutputStream());
@@ -282,6 +284,7 @@ public class ftpClientAndServer extends JPanel {
                     dos.writeUTF(command);
 
                     String fullResponseInput = dis.readUTF();
+                    System.out.println(fullResponseInput);
                     tokens = new StringTokenizer(fullResponseInput);
                     //Parses in status code indicating if server has file.
                     String response = tokens.nextToken();
