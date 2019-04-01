@@ -69,10 +69,10 @@ public class ftpClientAndServer extends JPanel {
         //I has questions about using serverHost and serverPort.
         //CentralServer open on port 3158.
         connectionInfo = ">> Connecting to IP " + serverHost + " Port " + serverPort;
-        System.out.println("WHY U NO WORK?");
+        System.out.println("WHY U NO WORK;EDIT WORKS?");
         stringsToDisplay.add(connectionInfo);
         s = new Socket(ip, Integer.parseInt(serverPort));
-        System.out.println("WHY U NO WORK? SOCKET EDITION");
+        System.out.println("WHY U NO WORK? SOCKET EDITION;EDIT WORKS");
 
         
         //Information of the client you would like to connect to.
@@ -86,7 +86,7 @@ public class ftpClientAndServer extends JPanel {
 
         //The connection stream that stores information about the client to be passed.
         //This will be parsed by each space with String Tokenizer.
-        out.writeUTF(userName + "" + localHost + "" + speed + "" + localPort);
+        out.writeUTF(userName + " " + localHost + " " + speed + " " + localPort);
         connectionInfo = "Succesfully connected to IP " + serverHost + " Port " + serverPort;
         stringsToDisplay.add(connectionInfo);
 
@@ -95,6 +95,8 @@ public class ftpClientAndServer extends JPanel {
         //Professor recommends xml, found this link
         //https://www.tutorialspoint.com/java_xml/java_dom4j_parse_document.htm
         File fileList = new File("./filelist.xml");
+        String absPath = fileList.getAbsolutePath();
+        System.out.println("Check this spot");
         if(fileList.exists()) {
             try {
                 SAXReader reader = new SAXReader();
@@ -103,8 +105,10 @@ public class ftpClientAndServer extends JPanel {
                 Element classElement = document.getRootElement();
 
                 //Creates a list of all the files in the filelist.xml starting at the tag "file".
+                System.out.println("TEST BEFORE NODES");
                 List<Node> nodes = document.selectNodes("/filelist/file");
                 //This sends the dataOutputStream the "200" success status code and the size of the nodes.
+                System.out.println("TEST AFTER NODES");
                 out.writeUTF("200" + "" + nodes.size());
 
                 for(Node node : nodes) {

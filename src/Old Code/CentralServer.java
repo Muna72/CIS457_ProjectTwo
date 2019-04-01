@@ -15,7 +15,7 @@ public class CentralServer {
     public static void main(String[] args) throws IOException {
 
         try {
-            welcomeSocket = new ServerSocket(3158);
+            welcomeSocket = new ServerSocket(9876);
             System.out.println("Server is Up.");
         } catch (Exception e) {
             System.err.println("Error: Server was not started.");
@@ -110,7 +110,7 @@ class ClientHandler implements Runnable {
                 tokens = new StringTokenizer(fileList);
                 //read in next token containing status code.
                 String data = tokens.nextToken();
-
+                System.out.println(data);
                 if(data.startsWith("200")) {
                     //Reads in the number of files available for download.
                     data = tokens.nextToken();
