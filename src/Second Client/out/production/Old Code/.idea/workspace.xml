@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f4eecec0-6747-429e-b063-53eb7c11a77b" name="Default Changelist" comment="" />
+    <list default="true" id="f4eecec0-6747-429e-b063-53eb7c11a77b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../Final Code/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Final Code/.idea/workspace.xml" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,11 +30,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ftpClientAndServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2771">
+            <state relative-caret-position="167">
               <caret line="211" column="5" selection-start-line="211" selection-start-column="5" selection-end-line="211" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1290#1298#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -50,7 +51,7 @@
     </findStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$USER_HOME$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -78,8 +79,8 @@
         <subPane>
           <expand>
             <path>
-              <item name="old code - Copy" type="b2602c69:ProjectViewProjectNode" />
-              <item name="old code - Copy" type="462c0819:PsiDirectoryNode" />
+              <item name="Second Client" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Second Client" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -90,7 +91,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/jaxen-1.1.1.jar!/" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -107,7 +108,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.CentralServer">
+  <component name="RunManager" selected="Application.FtpGUI">
     <configuration name="CentralServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="CentralServer" />
       <module name="Old Code" />
@@ -124,8 +125,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.CentralServer" />
         <item itemvalue="Application.FtpGUI" />
+        <item itemvalue="Application.CentralServer" />
       </list>
     </recent_temporary>
   </component>
@@ -144,9 +145,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="878" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25973153" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26308724" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -240,11 +240,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ftpClientAndServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2771">
+        <state relative-caret-position="167">
           <caret line="211" column="5" selection-start-line="211" selection-start-column="5" selection-end-line="211" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1290#1298#0" expanded="true" />
           </folding>
         </state>
       </provider>
