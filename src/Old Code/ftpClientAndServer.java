@@ -68,7 +68,7 @@ public class ftpClientAndServer extends JPanel {
         InetAddress ip = InetAddress.getByName(serverHost);
         //Connection to the central Server.
         //I has questions about using serverHost and serverPort.
-        //CentralServer open on port 3158.
+        //CentralServer open on port 9876.
         connectionInfo = ">> Connecting to IP " + serverHost + " Port " + serverPort;
         System.out.println("WHY U NO WORK;EDIT WORKS?");
         stringsToDisplay.add(connectionInfo);
@@ -153,11 +153,12 @@ public class ftpClientAndServer extends JPanel {
 
                         //dis reads in the command including filename to be downloaded to another host.
                         String command = dis.readUTF();
+                        System.out.println(command);
                         StringTokenizer tokens = new StringTokenizer(command);
                         //Parses the first token which is the command.
                         String targetFile = tokens.nextToken();
                         //targetFile now only contains the filename.
-                        targetFile = tokens.nextToken();
+                        //targetFile = tokens.nextToken();
                         
                         //Stores the targetFile into a file object
                         //file to be checked if exists in src folder.
@@ -168,7 +169,8 @@ public class ftpClientAndServer extends JPanel {
                             //output a "200" status code followed by a $ for string tokenizer followed by filesize
                             //indicating file exists and file size to be passed.
                             //removed fileSize.toString()); will remove if toString uneeded
-                            out.writeUTF("200$" + fileSize);
+                            dos.writeUTF("200$" + fileSize);
+                            System.out.println("200$" + fileSize);
                             //read in regardless of file formats.
                             //Send file
                             //Creates an array of bytes the size of the file to be transferred.
@@ -219,10 +221,10 @@ public class ftpClientAndServer extends JPanel {
         try {
             //send the keyword to the output stream of the central server.
             out.writeUTF(keyword);
-            String str = "";
+            //String str = "";
             //Reads in file information from the central server
             //if nothing matches the search str will equal EOF
-            str = in.readUTF();
+            String str = in.readUTF();
 
             availableFiles = new ArrayList<AvailableFile>();
 
@@ -267,6 +269,7 @@ public class ftpClientAndServer extends JPanel {
         stringsToDisplay.add(">> " + fileCommand);
     try {
         if(commandType.equals("retr")) {
+            System.out.println("test if after retr");
             for(int i = 0; i < availableFiles.size(); i++) {
                 //looks through the entire availableFile list searching for a matching file to the one we want.
                 //Requires correct fileName and username.
@@ -279,34 +282,42 @@ public class ftpClientAndServer extends JPanel {
 
                     DataOutputStream dos = new DataOutputStream(retr.getOutputStream());
                     DataInputStream dis = new DataInputStream(retr.getInputStream());
-                    
-                    String command = "retr: " + file;
+                    System.out.println(availableFiles.get(i).getFileName());
+                    String command = availableFiles.get(i).getFileName();
                     dos.writeUTF(command);
 
                     String fullResponseInput = dis.readUTF();
                     System.out.println(fullResponseInput);
                     tokens = new StringTokenizer(fullResponseInput);
                     //Parses in status code indicating if server has file.
-                    String response = tokens.nextToken();
+                    String response = tokens.nextToken("$");
+                    System.out.println(response);
                     //Parses in fileSize from String token.
-                    int fileSize = Integer.parseInt(tokens.nextToken());
+                    String fileSize2 = tokens.nextToken();
+                    System.out.println(fileSize2);
+                    double intFileSize = Double.parseDouble(fileSize2);
+                    int fileSize = (int) intFileSize;
+                    System.out.println(fileSize);
                     //The internet recommended keeping the fileSize above the actual fileSize as a precaution.
                     //1 kb bigger then actual fileSize.
-                    fileSize = fileSize + 1000;
+                    //fileSize = fileSize + 10;
 
                     if(!response.equals("404")) {
                         File newFile = new File("./" + file);
-                        int bytesRead;
-                        int current = 0;
-                        //might need to change initialization on these two.
-                        // FileOutputStream fos;
-                        // BufferedOutputStream bos;
-                        try {
+                            System.out.println("" + file);
+                            int bytesRead;
+                            int current = 0;
+                            //might need to change initialization on these two.
+                            // FileOutputStream fos;
+                            // BufferedOutputStream bos;
+                            try {
+                                System.out.println("testttyyy");
                             byte [] myByteArray = new byte [fileSize];
                             InputStream is = retr.getInputStream();
                             //this part left me with questions because the online example used poor conventions.
                             //https://www.rgagnon.com/javadetails/java-0542.html
-                            FileOutputStream fos = new FileOutputStream(newFile);
+                            FileOutputStream fos = new FileOutputStream("./" + file);
+                            System.out.println(""+newFile);
                             BufferedOutputStream bos = new BufferedOutputStream(fos);
                             bytesRead = is.read(myByteArray,0,myByteArray.length);
                             current = bytesRead;
@@ -315,7 +326,12 @@ public class ftpClientAndServer extends JPanel {
                                 bytesRead =
                                 is.read(myByteArray, current, (myByteArray.length-current));
                                 if(bytesRead >= 0) current += bytesRead;
+                                System.out.println("" + bytesRead);
                             } while(current < fileSize);
+                            bos.write(myByteArray, 0 , current);
+                            bos.flush();
+                            System.out.println("File " + file
+                                    + " downloaded (" + current + " bytes read)");
                             fos.close();
                             bos.close();
                             dos.close();
@@ -339,11 +355,12 @@ public class ftpClientAndServer extends JPanel {
             return false;
         }
     } catch (Exception e) {
+        e.printStackTrace();
         System.out.println("Error: Central Server must be connected and the search function must be utilized.");
     }
         return downloaded;
     }
-    //Sends a message to the central serval closing the socket connection
+    //Sends a message to the central server closing the socket connection
     //I believe swing interface would also close upon hitting a disconnect button but picture on profs doc looks like a central server quit via command.
     //could also just run if input from command textbox equals quit.
     public void quit() {
