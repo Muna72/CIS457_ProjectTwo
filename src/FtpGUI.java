@@ -366,9 +366,7 @@ import java.awt.event.WindowEvent;
                 fileInfo.setBorder(BorderFactory.createCompoundBorder());
                 go.setEnabled(true);
             }
-
-            //update GUI
-            //object.repaint();
+            cmdLine.repaint();
         }
 
 

@@ -36,9 +36,7 @@ public class ftpClientAndServer extends JPanel {
     private Boolean loggedIn;
     private String connectionInfo;
 
-    //TODO hey Quinn, add display information from each command to this arraylist (also ip addesses, etc) - see pic from rubric
-    //Done! Errors caught as well!
-    private ArrayList<String> stringsToDisplay = new ArrayList<String>();
+    protected ArrayList<String> stringsToDisplay = new ArrayList<String>();
     
     
     //ehhh just gonna hardcode a local port
@@ -71,6 +69,8 @@ public class ftpClientAndServer extends JPanel {
         //CentralServer open on port 9876.
         connectionInfo = ">> Connecting to IP " + serverHost + " Port " + serverPort;
         stringsToDisplay.add(connectionInfo);
+        System.out.println("HIT");
+        repaint();
         s = new Socket(ip, Integer.parseInt(serverPort));
 
         
@@ -200,7 +200,6 @@ public class ftpClientAndServer extends JPanel {
         }); 
         //Starts up the localServer. Instaniates the runnable thread.
         localServer.start();
-        repaint();
     } catch(IOException e) {
         e.printStackTrace();
     }
@@ -344,7 +343,6 @@ public class ftpClientAndServer extends JPanel {
                 }
             }
         }
-        repaint();
         if(commandResponse.equals("quit") || commandResponse.equals("QUIT")) {
             quit();
             return false;
@@ -377,7 +375,7 @@ public class ftpClientAndServer extends JPanel {
     public void paintComponent(Graphics g) {
         System.out.println("Paint called");
         super.paintComponent(g);
-
+        System.out.println(stringsToDisplay);
         for(int y = 0; y < stringsToDisplay.size(); ++y) {
             String curr = stringsToDisplay.get(y);
             g.drawString(curr + "\n", 1, 1);
