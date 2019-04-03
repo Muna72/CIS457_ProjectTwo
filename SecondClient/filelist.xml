@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<filelist>
+	<file>
+		<name>test.txt</name>
+		<description>This is our test file.</description>
+	</file>
+	<file>
+		<name>test2.txt</name>
+		<description>Hmm this looks like two.</description>
+	</file>
+</filelist>
